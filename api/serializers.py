@@ -17,15 +17,15 @@ class ItemListSerializer(serializers.ModelSerializer):
         )
 
 	added_by = UserSerializer()
+
 	likes = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Item
-		fields = ['id', 'image', 'name', 'description', 'detail', 'added_by', 'likes']
+		fields = ['id', 'name', 'detail', 'added_by', 'likes']
 
 	def get_likes(self, obj):
 		likes = len(obj.favoriteitem_set.all().values_list('user'))
-		# past_bookings = BookingSerializer(booking_objects, many=True)
 		return likes
 
 class ItemDetailsSerializer(serializers.ModelSerializer):
@@ -36,8 +36,10 @@ class ItemDetailsSerializer(serializers.ModelSerializer):
 		fields = ['image', 'name', 'description', 'likes_list']
 
 	def get_likes_list(self, obj):
-		liked_by = obj.favoriteitem_set.all().values_list('user')
-		# users = liked_by.filter(id=liked_by)
-		# likes_list = ItemListSerializer(liked_by, many=True)
-		return liked_by
-		# return users
+		liked_by = obj.favoriteitem_set.all()
+		users = []
+
+		for fave in liked_by:
+			users.append(fave.user)
+
+		return UserSerializer(users, many=True).data
