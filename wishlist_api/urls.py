@@ -18,6 +18,10 @@ from django.urls import path
 from items import views
 from django.conf import settings
 from django.conf.urls.static import static
+from api.views import ListAPIView
+
+# from api import views as api_views
+from api.views import ItemDetailView, ItemListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,6 +33,8 @@ urlpatterns = [
     path('user/register/', views.user_register, name='user-register'),
     path('user/login/', views.user_login, name='user-login'),
     path('user/logout/', views.user_logout, name='user-logout'),
+    path('list/', ItemListView.as_view(), name='list'),
+    path('detail/<int:item_id>/', ItemDetailView.as_view(), name='detail'),
 
     path('items/<int:item_id>/favorite/', views.item_favorite, name='item-favorite'),
 ]
